@@ -1,0 +1,6 @@
+# Install after the base requirements:
+# pip install -r requirements.txt -r requirements-memory.txt
+
+numpy>=2.0,<3.0
+turbovec>=0.1.0
+sentence-transformers>=3.0,<6.0
