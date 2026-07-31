@@ -1,0 +1,1 @@
+"""ArautoVideo application package."""
