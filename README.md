@@ -1,96 +1,130 @@
 # ArautoVideo Agent
 
-An open-source, modular AI video automation platform for discovering trends, researching topics, writing scripts, generating voiceovers, assembling videos, and publishing content.
+ArautoVideo is a modular AI video automation platform for discovering topics, researching them, writing scripts, creating storyboards, generating media, and publishing short-form videos.
 
-## Goal
+## Current status
 
-Build one unified system using selected ideas from:
+Phase 1 is now runnable. The application accepts a content request and returns:
 
-- `awesome-llm-apps` for agent patterns, research, memory, RAG, and multi-agent workflows
-- `MoneyPrinterTurbo` for automated short-video production patterns
-- `Pixelle-Video` for visual generation and editing ideas
-- `vox-director` for directing and storyboard workflows
-- `agent-reach` for distribution and outreach patterns
-- `public-apis` for optional free data sources
+- a research brief
+- a short-form narration script
+- a scene-by-scene storyboard
+- a structured video-job object
 
-We will not copy all repositories into this project. Each integration will be isolated behind a clean adapter.
+The current agents are deterministic development agents. Live LLM and search providers will be added behind adapters next.
 
-## Phase 1 Pipeline
+## Run locally
 
-```text
-Topic Request
-    ↓
-Trend Research Agent
-    ↓
-Research/Sources Agent
-    ↓
-Script Writer Agent
-    ↓
-Storyboard Agent
-    ↓
-Structured Video Job JSON
+```bash
+git clone https://github.com/abdulnajam-boop/allinone-video-app.git
+cd allinone-video-app
+python -m venv .venv
 ```
 
-## Planned Architecture
+Activate the environment:
+
+```bash
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+
+# macOS or Linux
+source .venv/bin/activate
+```
+
+Install and start:
+
+```bash
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn app.main:app --reload
+```
+
+Open:
+
+- API documentation: `http://127.0.0.1:8000/docs`
+- Health check: `http://127.0.0.1:8000/health`
+
+## Test the pipeline
+
+```bash
+curl -X POST "http://127.0.0.1:8000/api/v1/video-jobs/plan" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "topic": "How AI agents create short videos",
+    "audience": "new content creators",
+    "platform": "youtube_shorts",
+    "duration_seconds": 60,
+    "tone": "educational"
+  }'
+```
+
+Run automated tests:
+
+```bash
+pytest
+```
+
+## Architecture
 
 ```text
 app/
-  api/             FastAPI endpoints
-  agents/          Research, script, storyboard and publishing agents
-  core/            Configuration, logging and shared models
-  providers/       LLM, search, TTS, image and video adapters
-  services/        Pipeline orchestration and job management
-  workers/         Long-running media jobs
-  main.py           Application entry point
+  agents/          Research, script and storyboard agents
+  core/            Settings and shared Pydantic schemas
+  providers/       Upcoming LLM, search, TTS, image and video adapters
+  services/        Pipeline orchestration
+  main.py          FastAPI entry point
 
-data/
-  jobs/             Local development job files
-
-tests/
+tests/             API and pipeline tests
 ```
 
-## Provider Strategy
+## Integration strategy
 
-The project will support interchangeable providers:
+We will selectively adapt ideas rather than merge entire repositories:
 
-- LLM: Ollama/local models, OpenRouter, Gemini, OpenAI
-- Search: public APIs, RSS, Reddit and optional web-search providers
-- TTS: Kokoro/Piper first, with optional cloud providers
-- Video: FFmpeg-based assembly first
-- Storage: local filesystem first, then optional Cloudflare R2/S3
+- `awesome-llm-apps`: agent patterns, research, memory, RAG and multi-agent workflows
+- `API-mega-list`: API discovery only; every provider must be independently verified
+- `MoneyPrinterTurbo`: automated short-video workflow patterns
+- `Pixelle-Video`: visual-generation and editing ideas
+- `vox-director`: storyboard and directing workflows
+- `agent-reach`: distribution and outreach patterns
+- `public-apis`: optional free data providers
 
-## Development Roadmap
+## Roadmap
 
 ### Phase 1 — Agent foundation
 
-- [ ] FastAPI application
-- [ ] Environment configuration
-- [ ] Shared content and job schemas
-- [ ] Research agent
-- [ ] Script-writing agent
-- [ ] Storyboard agent
-- [ ] Pipeline endpoint
+- [x] FastAPI application
+- [x] Environment configuration
+- [x] Shared content and job schemas
+- [x] Development research agent
+- [x] Development script-writing agent
+- [x] Development storyboard agent
+- [x] Pipeline endpoint
+- [ ] Live search provider
+- [ ] Ollama/OpenRouter LLM adapter
+- [ ] Source verification and citations
 
 ### Phase 2 — Media generation
 
-- [ ] Local/open-source TTS adapter
-- [ ] Stock-media providers
+- [ ] Kokoro or Piper TTS adapter
+- [ ] Pexels and Pixabay media adapters
 - [ ] Image-generation adapter
 - [ ] FFmpeg video assembler
 - [ ] Captions
 
 ### Phase 3 — Automation and publishing
 
-- [ ] Scheduler
+- [ ] Persistent job storage
+- [ ] Scheduler and workers
 - [ ] YouTube publishing
-- [ ] TikTok/Instagram export workflow
+- [ ] TikTok and Instagram export workflow
 - [ ] Analytics and retry handling
 - [ ] n8n integration
 
-## Important
+## Security
 
-Never commit API keys. Copy `.env.example` to `.env` and keep `.env` private.
+Never commit API keys. Copy `.env.example` to `.env`; `.env` is ignored by Git.
 
-## License
+## Licensing
 
-This repository will contain original integration code. Third-party components remain governed by their own licenses and notices.
+ArautoVideo integration code will be original. Any third-party component or adapted code must retain its own license and attribution requirements.
